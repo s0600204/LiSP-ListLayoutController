@@ -1,5 +1,10 @@
 {
-    "_version_": "1.0",
+    "_version_": "1.1",
     "_enabled_": true,
-    "gomidimapping": ""
+    "gomidimapping": "",
+    "stopmidimapping": "",
+    "pausemidimapping": "",
+    "fadeinmidimapping": "",
+    "fadeoutmidimapping": "",
+    "resumemidimapping": ""
 }
