@@ -50,22 +50,24 @@ class ListLayoutController(Plugin):
             AppConfigurationDialog.registerSettingsPage(
                 'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
 
-            if self.Config['gomidimapping']:
-                self.__midi_mapping = midi_utils.str_msg_to_dict(self.Config['gomidimapping'])
+            self.__keyword_to_button = {
+                'gomidimapping': Application().layout._view.goButton,
+                'stopmidimapping': Application().layout._view.controlButtons.stopButton,
+                'pausemidimapping': Application().layout._view.controlButtons.pauseButton,
+                'fadeinmidimapping': Application().layout._view.controlButtons.fadeInButton,
+                'fadeoutmidimapping': Application().layout._view.controlButtons.fadeOutButton,
+                'resumemidimapping': Application().layout._view.controlButtons.resumeButton,
+                'interruptmidimapping': Application().layout._view.controlButtons.interruptButton
+            }
 
-            get_plugin('Midi').input.new_message.connect(self.do_something_when_midi_triggered)
-            logger.debug('midi signal connected !')
+            get_plugin('Midi').input.new_message.connect(self.on_new_midi_message)
 
-    def do_something_when_midi_triggered(self, message):
-        msg = message.dict()
+    def on_new_midi_message(self, message):
+        msg_dict = message.dict()
+        if 'velocity' in msg_dict:
+            msg_dict.pop('velocity')
+        simplified_msg = midi_utils.dict_msg_to_str(msg_dict)
 
-        if message.type != 'program_change':
-            logger.debug(f"msg from config : {self.__midi_mapping}")
-            logger.debug(f"msg received : {msg}")
-            return
-        mapping = midi_utils.str_msg_to_dict(self.Config['gomidimapping'])
-        if msg['channel'] == mapping['channel']:
-            if msg['program'] == mapping['program']:
-                Application().layout.go()
-                logger.info('Trigger activated')
-
+        for keyword, mapping in self.Config._root.items():
+            if mapping == simplified_msg:
+                self.__keyword_to_button[keyword].click()

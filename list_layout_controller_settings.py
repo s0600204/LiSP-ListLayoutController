@@ -17,11 +17,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
+
 import logging
-from PyQt5.QtWidgets import QVBoxLayout, QGroupBox, QHBoxLayout, QLabel, QPushButton, QMessageBox
+
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
+from PyQt5.QtWidgets import QVBoxLayout, QGroupBox, QHBoxLayout, QLabel, QPushButton, QMessageBox
 
 from lisp.plugins import get_plugin
+from lisp.plugins.midi import midi_utils
 from lisp.ui.settings.pages import SettingsPage
 from lisp.ui.ui_utils import translate
 
@@ -87,6 +90,14 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         layout.addWidget(self.resumeMidiButton)
         self.midiMapping.layout().addLayout(layout)
 
+        self.interruptMidiButton = QPushButton()
+        self.interruptMidiButton.clicked.connect(self.__learn_midi)
+        self.interruptMidiLabel = QLabel()
+        layout = QHBoxLayout()
+        layout.addWidget(self.interruptMidiLabel)
+        layout.addWidget(self.interruptMidiButton)
+        self.midiMapping.layout().addLayout(layout)
+
         self.retranslateUi()
 
     def retranslateUi(self):
@@ -102,6 +113,8 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         self.fadeOutMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
         self.resumeMidiLabel.setText(translate('ListLayoutController', 'Resume control'))
         self.resumeMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
+        self.interruptMidiLabel.setText(translate('ListLayoutController', 'Interrupt control'))
+        self.interruptMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
 
     def getSettings(self):
         return {
@@ -110,7 +123,8 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
             'pausemidimapping': self.pauseMidiButton.text(),
             'fadeinmidimapping': self.fadeInMidiButton.text(),
             'fadeoutmidimapping': self.fadeOutMidiButton.text(),
-            'resumemidimapping': self.resumeMidiButton.text()
+            'resumemidimapping': self.resumeMidiButton.text(),
+            'interruptmidimapping': self.interruptMidiButton.text()
         }
 
     def loadSettings(self, settings):
@@ -120,13 +134,20 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         self.fadeInMidiButton.setText(settings['fadeinmidimapping'])
         self.fadeOutMidiButton.setText(settings['fadeoutmidimapping'])
         self.resumeMidiButton.setText(settings['resumemidimapping'])
+        self.interruptMidiButton.setText(settings['interruptmidimapping'])
 
     def __learn_midi(self):
         handler = get_plugin('Midi').input
         handler.alternate_mode = True
 
         def received_message(msg):
-            self.sender().setText(str(msg))
+            msg_dict = midi_utils.str_msg_to_dict(str(msg))
+            try:
+                msg_dict.pop('velocity')
+            except KeyError:
+                pass
+            simplified_msg = midi_utils.dict_msg_to_str(msg_dict)
+            self.sender().setText(simplified_msg)
             self.midi_learn.accept()
 
         handler.new_message_alt.connect(received_message)
