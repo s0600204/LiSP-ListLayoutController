@@ -20,11 +20,18 @@
 
 import logging
 
+from lisp.application import Application
 from lisp.core.plugin import Plugin
 from lisp.plugins import get_plugin
-from lisp.plugins.list_layout.settings import ListLayoutSettings
+#from lisp.plugins.list_layout.settings import ListLayoutSettings
 from lisp.plugins.list_layout_controller.list_layout_controller_settings import ListLayoutControllerSettings
+from lisp.plugins.midi import midi_utils
+from lisp.plugins.list_layout.layout import ListLayout
 from lisp.ui.settings.app_configuration import AppConfigurationDialog
+'''
+from lisp.core.configuration import config
+
+'''
 
 logger = logging.getLogger(__name__)
 
@@ -42,11 +49,26 @@ class ListLayoutController(Plugin):
         AppConfigurationDialog.registerSettingsPage(
             'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
 
-        logger.debug("-> " + str(self.Config['gomidimapping']))
+        self.__midi_mapping = midi_utils.str_msg_to_dict(self.Config['gomidimapping'])
 
-        get_plugin('Midi').input.new_message.connect(self.do_something_when_midi_triggered)
+        Application().session_created.connect(self._on_session_init)
+        logger.debug('init of plugin done')
+
+    def _on_session_init(self):
+        if isinstance(Application().layout, ListLayout):
+            get_plugin('Midi').input.new_message.connect(self.do_something_when_midi_triggered)
+            logger.debug('midi signal connected !')
 
     def do_something_when_midi_triggered(self, message):
-        logger.debug(f'I do something with {message} !')
-        logger.debug(type(message))
+        msg = midi_utils.str_msg_to_dict(str(message))
+
+        if message.type != 'program_change':
+            logger.debug(f"msg from config : {self.__midi_mapping}")
+            logger.debug(f"msg received : {msg}")
+            return
+
+        if msg['channel'] == self.__midi_mapping['channel']:
+            if msg['program'] == self.__midi_mapping['program']:
+                Application().layout.go()
+                logger.info('Trigger activated')
 
