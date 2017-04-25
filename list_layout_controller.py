@@ -50,14 +50,16 @@ class ListLayoutController(Plugin):
             AppConfigurationDialog.registerSettingsPage(
                 'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
 
-            self.__keyword_to_button = {
-                'gomidimapping': Application().layout._view.goButton,
-                'stopmidimapping': Application().layout._view.controlButtons.stopButton,
-                'pausemidimapping': Application().layout._view.controlButtons.pauseButton,
-                'fadeinmidimapping': Application().layout._view.controlButtons.fadeInButton,
-                'fadeoutmidimapping': Application().layout._view.controlButtons.fadeOutButton,
-                'resumemidimapping': Application().layout._view.controlButtons.resumeButton,
-                'interruptmidimapping': Application().layout._view.controlButtons.interruptButton
+            self.__keyword_to_action = {
+                'gomidimapping': Application().layout._view.goButton.click,
+                'stopmidimapping': Application().layout._view.controlButtons.stopButton.click,
+                'pausemidimapping': Application().layout._view.controlButtons.pauseButton.click,
+                'fadeinmidimapping': Application().layout._view.controlButtons.fadeInButton.click,
+                'fadeoutmidimapping': Application().layout._view.controlButtons.fadeOutButton.click,
+                'resumemidimapping': Application().layout._view.controlButtons.resumeButton.click,
+                'interruptmidimapping': Application().layout._view.controlButtons.interruptButton.click,
+                'prevcuemidimapping' : Application().layout._view.listView.selectPrevCue,
+                'nextcuemidimapping' : Application().layout._view.listView.selectNextCue
             }
 
             get_plugin('Midi').input.new_message.connect(self.on_new_midi_message)
@@ -70,4 +72,4 @@ class ListLayoutController(Plugin):
 
         for keyword, mapping in self.Config._root.items():
             if mapping == simplified_msg:
-                self.__keyword_to_button[keyword].click()
+                self.__keyword_to_action[keyword]()

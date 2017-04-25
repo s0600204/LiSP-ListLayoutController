@@ -98,6 +98,22 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         layout.addWidget(self.interruptMidiButton)
         self.midiMapping.layout().addLayout(layout)
 
+        self.prevCueMidiButton = QPushButton()
+        self.prevCueMidiButton.clicked.connect(self.__learn_midi)
+        self.prevCueMidiLabel = QLabel()
+        layout = QHBoxLayout()
+        layout.addWidget(self.prevCueMidiLabel)
+        layout.addWidget(self.prevCueMidiButton)
+        self.midiMapping.layout().addLayout(layout)
+
+        self.nextCueMidiButton = QPushButton()
+        self.nextCueMidiButton.clicked.connect(self.__learn_midi)
+        self.nextCueMidiLabel = QLabel()
+        layout = QHBoxLayout()
+        layout.addWidget(self.nextCueMidiLabel)
+        layout.addWidget(self.nextCueMidiButton)
+        self.midiMapping.layout().addLayout(layout)
+
         self.retranslateUi()
 
     def retranslateUi(self):
@@ -115,6 +131,10 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         self.resumeMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
         self.interruptMidiLabel.setText(translate('ListLayoutController', 'Interrupt control'))
         self.interruptMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
+        self.prevCueMidiLabel.setText(translate('ListLayoutController', 'Previous Cue control'))
+        self.prevCueMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
+        self.nextCueMidiLabel.setText(translate('ListLayoutController', 'Next Cue control'))
+        self.nextCueMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
 
     def getSettings(self):
         return {
@@ -124,7 +144,9 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
             'fadeinmidimapping': self.fadeInMidiButton.text(),
             'fadeoutmidimapping': self.fadeOutMidiButton.text(),
             'resumemidimapping': self.resumeMidiButton.text(),
-            'interruptmidimapping': self.interruptMidiButton.text()
+            'interruptmidimapping': self.interruptMidiButton.text(),
+            'prevcuemidimapping': self.prevCueMidiButton.text(),
+            'nextcuemidimapping': self.nextCueMidiButton.text()
         }
 
     def loadSettings(self, settings):
@@ -135,6 +157,8 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         self.fadeOutMidiButton.setText(settings['fadeoutmidimapping'])
         self.resumeMidiButton.setText(settings['resumemidimapping'])
         self.interruptMidiButton.setText(settings['interruptmidimapping'])
+        self.prevCueMidiButton.setText(settings['prevcuemidimapping'])
+        self.nextCueMidiButton.setText(settings['nextcuemidimapping'])
 
     def __learn_midi(self):
         handler = get_plugin('Midi').input
