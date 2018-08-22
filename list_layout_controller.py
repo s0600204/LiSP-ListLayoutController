@@ -40,6 +40,7 @@ class ListLayoutController(Plugin):
     def __init__(self, app):
         super().__init__(app)
         self.__midi_mapping = {}
+        self.__keyword_to_action = {}
 
         Application().session_created.connect(self._on_session_init)
 
@@ -50,16 +51,17 @@ class ListLayoutController(Plugin):
             AppConfigurationDialog.registerSettingsPage(
                 'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
 
+            layout_view = Application().layout.view()
             self.__keyword_to_action = {
-                'gomidimapping': Application().layout._view.goButton.click,
-                'stopmidimapping': Application().layout._view.controlButtons.stopButton.click,
-                'pausemidimapping': Application().layout._view.controlButtons.pauseButton.click,
-                'fadeinmidimapping': Application().layout._view.controlButtons.fadeInButton.click,
-                'fadeoutmidimapping': Application().layout._view.controlButtons.fadeOutButton.click,
-                'resumemidimapping': Application().layout._view.controlButtons.resumeButton.click,
-                'interruptmidimapping': Application().layout._view.controlButtons.interruptButton.click,
-                'prevcuemidimapping' : Application().layout._view.listView.selectPrevCue,
-                'nextcuemidimapping' : Application().layout._view.listView.selectNextCue
+                'go': layout_view.goButton.click,
+                'stop': layout_view.controlButtons.stopButton.click,
+                'pause': layout_view.controlButtons.pauseButton.click,
+                'fadeIn': layout_view.controlButtons.fadeInButton.click,
+                'fadeOut': layout_view.controlButtons.fadeOutButton.click,
+                'resume': layout_view.controlButtons.resumeButton.click,
+                'interrupt': layout_view.controlButtons.interruptButton.click,
+                'prevCue' : layout_view.listView.selectPrevCue,
+                'nextCue' : layout_view.listView.selectNextCue
             }
 
             get_plugin('Midi').input.new_message.connect(self.on_new_midi_message)
@@ -70,6 +72,6 @@ class ListLayoutController(Plugin):
             msg_dict.pop('velocity')
         simplified_msg = midi_utils.dict_msg_to_str(msg_dict)
 
-        for keyword, mapping in self.Config._root.items():
+        for keyword, mapping in self.Config['mappings'].items():
             if mapping == simplified_msg:
                 self.__keyword_to_action[keyword]()

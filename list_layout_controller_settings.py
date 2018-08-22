@@ -18,10 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
-from PyQt5.QtWidgets import QVBoxLayout, QGroupBox, QHBoxLayout, QLabel, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QGroupBox, QLabel, QPushButton, QMessageBox, QFormLayout
 
 from lisp.plugins import get_plugin
 from lisp.plugins.midi import midi_utils
@@ -31,134 +29,69 @@ from lisp.ui.ui_utils import translate
 class ListLayoutControllerSettings(QGroupBox, SettingsPage):
     Name = QT_TRANSLATE_NOOP('ConfigurationPageName', 'List Layout Controller')
 
+    MappingsMap = {
+        'go': {
+            'caption': 'GO control'
+        },
+        'stop': {
+            'caption': 'Stop All control'
+        },
+        'pause': {
+            'caption': 'Pause control'
+        },
+        'fadeIn': {
+            'caption': 'Fade In control'
+        },
+        'fadeOut': {
+            'caption': 'Fade Out control'
+        },
+        'resume': {
+            'caption': 'Resume control'
+        },
+        'interrupt': {
+            'caption': 'Interrupt control'
+        },
+        'prevCue': {
+            'caption': 'Previous Cue control'
+        },
+        'nextCue': {
+            'caption': 'Next Cue control'
+        }
+    }
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # midi General Control
-        self.setLayout(QVBoxLayout())
-        self.midiMapping = QGroupBox()
-        self.midiMapping.setTitle(translate('ListLayoutController', 'Midi Mappings'))
-        self.midiMapping.setLayout(QVBoxLayout())
-        self.layout().addWidget(self.midiMapping)
-        self.layout().addStretch()
+        self.setLayout(QFormLayout())
+        self.setTitle(translate('ListLayoutController', 'Midi Mappings'))
 
-        self.goMidiButton = QPushButton()
-        self.goMidiButton.clicked.connect(self.__learn_midi)
-        self.goMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.goMidiLabel)
-        layout.addWidget(self.goMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.stopMidiButton = QPushButton()
-        self.stopMidiButton.clicked.connect(self.__learn_midi)
-        self.stopMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.stopMidiLabel)
-        layout.addWidget(self.stopMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.pauseMidiButton = QPushButton()
-        self.pauseMidiButton.clicked.connect(self.__learn_midi)
-        self.pauseMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.pauseMidiLabel)
-        layout.addWidget(self.pauseMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.fadeInMidiButton = QPushButton()
-        self.fadeInMidiButton.clicked.connect(self.__learn_midi)
-        self.fadeInMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.fadeInMidiLabel)
-        layout.addWidget(self.fadeInMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.fadeOutMidiButton = QPushButton()
-        self.fadeOutMidiButton.clicked.connect(self.__learn_midi)
-        self.fadeOutMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.fadeOutMidiLabel)
-        layout.addWidget(self.fadeOutMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.resumeMidiButton = QPushButton()
-        self.resumeMidiButton.clicked.connect(self.__learn_midi)
-        self.resumeMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.resumeMidiLabel)
-        layout.addWidget(self.resumeMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.interruptMidiButton = QPushButton()
-        self.interruptMidiButton.clicked.connect(self.__learn_midi)
-        self.interruptMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.interruptMidiLabel)
-        layout.addWidget(self.interruptMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.prevCueMidiButton = QPushButton()
-        self.prevCueMidiButton.clicked.connect(self.__learn_midi)
-        self.prevCueMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.prevCueMidiLabel)
-        layout.addWidget(self.prevCueMidiButton)
-        self.midiMapping.layout().addLayout(layout)
-
-        self.nextCueMidiButton = QPushButton()
-        self.nextCueMidiButton.clicked.connect(self.__learn_midi)
-        self.nextCueMidiLabel = QLabel()
-        layout = QHBoxLayout()
-        layout.addWidget(self.nextCueMidiLabel)
-        layout.addWidget(self.nextCueMidiButton)
-        self.midiMapping.layout().addLayout(layout)
+        for mapDef in self.MappingsMap.values():
+            mapDef['label'] = QLabel(self)
+            mapDef['button'] = QPushButton(self)
+            mapDef['button'].clicked.connect(self.__learn_midi)
+            self.layout().addRow(mapDef['label'], mapDef['button'])
 
         self.retranslateUi()
 
     def retranslateUi(self):
-        self.goMidiLabel.setText(translate('ListLayoutController', 'GO control'))
-        self.goMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.stopMidiLabel.setText(translate('ListLayoutController', 'Stop All control'))
-        self.stopMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.pauseMidiLabel.setText(translate('ListLayoutController', 'Pause control'))
-        self.pauseMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.fadeInMidiLabel.setText(translate('ListLayoutController', 'Fade In control'))
-        self.fadeInMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.fadeOutMidiLabel.setText(translate('ListLayoutController', 'Fade Out control'))
-        self.fadeOutMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.resumeMidiLabel.setText(translate('ListLayoutController', 'Resume control'))
-        self.resumeMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.interruptMidiLabel.setText(translate('ListLayoutController', 'Interrupt control'))
-        self.interruptMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.prevCueMidiLabel.setText(translate('ListLayoutController', 'Previous Cue control'))
-        self.prevCueMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
-        self.nextCueMidiLabel.setText(translate('ListLayoutController', 'Next Cue control'))
-        self.nextCueMidiButton.setText(translate('ListLayoutController', 'No MIDI mapping'))
+        for mapDef in self.MappingsMap.values():
+            mapDef['label'].setText(translate('ListLayoutController', mapDef['caption']))
+            mapDef['button'].setText(translate('ListLayoutController', 'No MIDI mapping'))
 
     def getSettings(self):
-        return {
-            'gomidimapping': self.goMidiButton.text(),
-            'stopmidimapping': self.stopMidiButton.text(),
-            'pausemidimapping': self.pauseMidiButton.text(),
-            'fadeinmidimapping': self.fadeInMidiButton.text(),
-            'fadeoutmidimapping': self.fadeOutMidiButton.text(),
-            'resumemidimapping': self.resumeMidiButton.text(),
-            'interruptmidimapping': self.interruptMidiButton.text(),
-            'prevcuemidimapping': self.prevCueMidiButton.text(),
-            'nextcuemidimapping': self.nextCueMidiButton.text()
-        }
+        noMidiCaption = translate('ListLayoutController', 'No MIDI mapping')
+        settings = { 'mappings': {} }
+        for mapId, mapDef in self.MappingsMap.items():
+            if mapDef['button'].text() != noMidiCaption:
+                settings['mappings'][mapId] = mapDef['button'].text()
+            else:
+                settings['mappings'][mapId] = ""
+        return settings
 
     def loadSettings(self, settings):
-        self.goMidiButton.setText(settings['gomidimapping'])
-        self.stopMidiButton.setText(settings['stopmidimapping'])
-        self.pauseMidiButton.setText(settings['pausemidimapping'])
-        self.fadeInMidiButton.setText(settings['fadeinmidimapping'])
-        self.fadeOutMidiButton.setText(settings['fadeoutmidimapping'])
-        self.resumeMidiButton.setText(settings['resumemidimapping'])
-        self.interruptMidiButton.setText(settings['interruptmidimapping'])
-        self.prevCueMidiButton.setText(settings['prevcuemidimapping'])
-        self.nextCueMidiButton.setText(settings['nextcuemidimapping'])
+        for mapId, mapDef in self.MappingsMap.items():
+            if settings['mappings'][mapId]:
+                mapDef['button'].setText(settings['mappings'][mapId])
 
     def __learn_midi(self):
         handler = get_plugin('Midi').input
@@ -166,10 +99,9 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
 
         def received_message(msg):
             msg_dict = midi_utils.str_msg_to_dict(str(msg))
-            try:
+            if 'velocity' in msg_dict:
                 msg_dict.pop('velocity')
-            except KeyError:
-                pass
+
             simplified_msg = midi_utils.dict_msg_to_str(msg_dict)
             self.sender().setText(simplified_msg)
             self.midi_learn.accept()

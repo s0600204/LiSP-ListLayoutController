@@ -1,13 +1,15 @@
 {
-    "_version_": "1.3",
+    "_version_": "1.4",
     "_enabled_": true,
-    "gomidimapping": "",
-    "stopmidimapping": "",
-    "pausemidimapping": "",
-    "fadeinmidimapping": "",
-    "fadeoutmidimapping": "",
-    "resumemidimapping": "",
-    "interruptmidimapping": "",
-    "prevcuemidimapping": "",
-    "nextcuemidimapping": ""
+    "mappings": {
+        "go": "",
+        "stop": "",
+        "pause": "",
+        "fadeIn": "",
+        "fadeOut": "",
+        "resume": "",
+        "interrupt": "",
+        "prevCue": "",
+        "nextCue": ""
+    }
 }
