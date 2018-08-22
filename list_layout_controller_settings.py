@@ -21,12 +21,11 @@
 from PyQt5.QtWidgets import QVBoxLayout, QGroupBox, QHBoxLayout, QLabel, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
 
-from lisp.modules.midi.midi_input import MIDIInput
-from lisp.ui.settings.settings_page import SettingsPage
+from lisp.plugins import get_plugin
+from lisp.ui.settings.pages import SettingsPage
 from lisp.ui.ui_utils import translate
 
-
-class ListLayoutControllerSetting(QGroupBox, SettingsPage):
+class ListLayoutControllerSettings(QGroupBox, SettingsPage):
     Name = 'List Layout Controller'
 
     def __init__(self, **kwargs):
@@ -48,20 +47,16 @@ class ListLayoutControllerSetting(QGroupBox, SettingsPage):
         self.goMidiLabel.setText(translate('ListLayout', 'GO control'))
         self.goMidiButton.setText(translate('ListLayout', 'No midi mapping'))
 
-    def get_settings(self):
-
-        settings = {
-            'gomidimapping': str(self.goMidiButton.text()),
+    def getSettings(self):
+        return {
+            'gomidimapping': self.goMidiButton.text()
         }
 
-        for key, val in settings.items():
-            yield (key, val)
-
-    def load_settings(self, settings):
-        self.goMidiButton.setText(settings.get('gomidimapping'))
+    def loadSettings(self, settings):
+        self.goMidiButton.setText(settings['gomidimapping'])
 
     def on_go_midi_clicked(self):
-        handler = MIDIInput()
+        handler = get_plugin('Midi').input
         handler.alternate_mode = True
         handler.new_message_alt.connect(self.__received_message)
 
@@ -79,5 +74,3 @@ class ListLayoutControllerSetting(QGroupBox, SettingsPage):
     def __received_message(self, msg):
         self.goMidiButton.setText(str(msg))
         self.midi_learn.accept()
-
-
