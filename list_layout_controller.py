@@ -23,10 +23,11 @@ import logging
 from lisp.application import Application
 from lisp.core.plugin import Plugin
 from lisp.plugins import get_plugin
-from lisp.plugins.list_layout_controller.list_layout_controller_settings import ListLayoutControllerSettings
 from lisp.plugins.midi import midi_utils
 from lisp.plugins.list_layout.layout import ListLayout
 from lisp.ui.settings.app_configuration import AppConfigurationDialog
+
+from .list_layout_controller_settings import ListLayoutControllerSettings
 
 logger = logging.getLogger(__name__)
 
