@@ -52,7 +52,8 @@ class ListLayoutController(Plugin):
             AppConfigurationDialog.registerSettingsPage(
                 'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
 
-            layout_view = Application().layout.view()
+            layout = self.app.layout
+            layout_view = layout.view()
             self.__keyword_to_action = {
                 'go': layout_view.goButton.click,
                 'stop': layout_view.controlButtons.stopButton.click,
@@ -61,8 +62,8 @@ class ListLayoutController(Plugin):
                 'fadeOut': layout_view.controlButtons.fadeOutButton.click,
                 'resume': layout_view.controlButtons.resumeButton.click,
                 'interrupt': layout_view.controlButtons.interruptButton.click,
-                'prevCue' : layout_view.listView.selectPrevCue,
-                'nextCue' : layout_view.listView.selectNextCue
+                'prevCue': lambda: layout.set_standby_index(layout.standby_index() - 1),
+                'nextCue': lambda: layout.set_standby_index(layout.standby_index() + 1),
             }
 
             get_plugin('Midi').input.new_message.connect(self.on_new_midi_message)
