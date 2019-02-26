@@ -43,31 +43,32 @@ class ListLayoutController(Plugin):
         self.__midi_mapping = {}
         self.__keyword_to_action = {}
 
-        Application().session_created.connect(self._on_session_init)
-        Application().session_before_finalize.connect(self._on_session_deinit)
+        app.session_created.connect(self._on_session_init)
+        app.session_before_finalize.connect(self._on_session_deinit)
 
     def _on_session_init(self):
-        if isinstance(Application().layout, ListLayout):
+        if not isinstance(self.app.layout, ListLayout):
+            return
 
-            # Register the settings widget
-            AppConfigurationDialog.registerSettingsPage(
-                'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
+        # Register the settings widget
+        AppConfigurationDialog.registerSettingsPage(
+            'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
 
-            layout = self.app.layout
-            layout_view = layout.view()
-            self.__keyword_to_action = {
-                'go': layout_view.goButton.click,
-                'stop': layout_view.controlButtons.stopButton.click,
-                'pause': layout_view.controlButtons.pauseButton.click,
-                'fadeIn': layout_view.controlButtons.fadeInButton.click,
-                'fadeOut': layout_view.controlButtons.fadeOutButton.click,
-                'resume': layout_view.controlButtons.resumeButton.click,
-                'interrupt': layout_view.controlButtons.interruptButton.click,
-                'prevCue': lambda: layout.set_standby_index(layout.standby_index() - 1),
-                'nextCue': lambda: layout.set_standby_index(layout.standby_index() + 1),
-            }
+        layout = self.app.layout
+        layout_view = layout.view()
+        self.__keyword_to_action = {
+            'go': layout_view.goButton.click,
+            'stop': layout_view.controlButtons.stopButton.click,
+            'pause': layout_view.controlButtons.pauseButton.click,
+            'fadeIn': layout_view.controlButtons.fadeInButton.click,
+            'fadeOut': layout_view.controlButtons.fadeOutButton.click,
+            'resume': layout_view.controlButtons.resumeButton.click,
+            'interrupt': layout_view.controlButtons.interruptButton.click,
+            'prevCue': lambda: layout.set_standby_index(layout.standby_index() - 1),
+            'nextCue': lambda: layout.set_standby_index(layout.standby_index() + 1),
+        }
 
-            get_plugin('Midi').input.new_message.connect(self.on_new_midi_message)
+        get_plugin('Midi').input.new_message.connect(self.on_new_midi_message)
 
     def _on_session_deinit(self):
         self.__keyword_to_action = {}
