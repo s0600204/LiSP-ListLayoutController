@@ -44,6 +44,7 @@ class ListLayoutController(Plugin):
         self.__keyword_to_action = {}
 
         Application().session_created.connect(self._on_session_init)
+        Application().session_before_finalize.connect(self._on_session_deinit)
 
     def _on_session_init(self):
         if isinstance(Application().layout, ListLayout):
@@ -67,6 +68,9 @@ class ListLayoutController(Plugin):
             }
 
             get_plugin('Midi').input.new_message.connect(self.on_new_midi_message)
+
+    def _on_session_deinit(self):
+        self.__keyword_to_action = {}
 
     def on_new_midi_message(self, message):
         msg_dict = message.dict()
