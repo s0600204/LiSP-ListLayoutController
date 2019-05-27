@@ -18,9 +18,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Plugin for controlling the List Layout via MIDI.
+
+This plugin adds the ability to control various functions in the List Layout
+(Go, Stop, Back, Forward, ...) with MIDI voice messages.
+
+Code based on Yinameah's work in Pull Request #80.
+"""
+
 import logging
 
-from lisp.application import Application
+# pylint: disable=import-error
 from lisp.core.plugin import Plugin
 from lisp.plugins import get_plugin
 from lisp.plugins.midi import midi_utils
@@ -29,9 +37,12 @@ from lisp.ui.settings.app_configuration import AppConfigurationDialog
 
 from .list_layout_controller_settings import ListLayoutControllerSettings
 
+# pylint: disable=invalid-name
 logger = logging.getLogger(__name__)
 
+# pylint: disable=too-few-public-methods
 class ListLayoutController(Plugin):
+    """The primary class of this Plugin."""
 
     Name = 'List Layout MIDI Control'
     Authors = ('Aurélien Cibrario',)
@@ -74,6 +85,8 @@ class ListLayoutController(Plugin):
         self.__keyword_to_action = {}
 
     def on_new_midi_message(self, message):
+        """Called when a new MIDI message is recieved on the connected input."""
+
         msg_dict = message.dict()
         if 'velocity' in msg_dict:
             msg_dict.pop('velocity')

@@ -18,15 +18,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Settings page for the ListLayoutController plugin"""
+
+# pylint: disable=no-name-in-module
 from PyQt5.QtCore import QT_TRANSLATE_NOOP
 from PyQt5.QtWidgets import QGroupBox, QLabel, QPushButton, QMessageBox, QFormLayout
 
+# pylint: disable=import-error
 from lisp.plugins import get_plugin
 from lisp.plugins.midi import midi_utils
 from lisp.ui.settings.pages import SettingsPage
 from lisp.ui.ui_utils import translate
 
 class ListLayoutControllerSettings(QGroupBox, SettingsPage):
+    """Settings page for the ListLayoutController plugin"""
     Name = QT_TRANSLATE_NOOP('ConfigurationPageName', 'List Layout Controller')
 
     MappingsMap = {
@@ -65,33 +70,36 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         self.setLayout(QFormLayout())
         self.setTitle(translate('ListLayoutController', 'Midi Mappings'))
 
-        for mapDef in self.MappingsMap.values():
-            mapDef['label'] = QLabel(self)
-            mapDef['button'] = QPushButton(self)
-            mapDef['button'].clicked.connect(self.__learn_midi)
-            self.layout().addRow(mapDef['label'], mapDef['button'])
+        for map_def in self.MappingsMap.values():
+            map_def['label'] = QLabel(self)
+            map_def['button'] = QPushButton(self)
+            map_def['button'].clicked.connect(self.__learn_midi)
+            self.layout().addRow(map_def['label'], map_def['button'])
 
         self.retranslateUi()
 
-    def retranslateUi(self):
-        for mapDef in self.MappingsMap.values():
-            mapDef['label'].setText(translate('ListLayoutController', mapDef['caption']))
-            mapDef['button'].setText(translate('ListLayoutController', 'No MIDI mapping'))
+    def retranslateUi(self): # pylint: disable=invalid-name
+        """Retranslates the UI"""
+        for map_def in self.MappingsMap.values():
+            map_def['label'].setText(translate('ListLayoutController', map_def['caption']))
+            map_def['button'].setText(translate('ListLayoutController', 'No MIDI mapping'))
 
-    def getSettings(self):
-        noMidiCaption = translate('ListLayoutController', 'No MIDI mapping')
-        settings = { 'mappings': {} }
-        for mapId, mapDef in self.MappingsMap.items():
-            if mapDef['button'].text() != noMidiCaption:
-                settings['mappings'][mapId] = mapDef['button'].text()
+    def getSettings(self): # pylint: disable=invalid-name
+        """Get the settings from the UI (and pass them to be saved)."""
+        no_midi_caption = translate('ListLayoutController', 'No MIDI mapping')
+        settings = {'mappings': {}}
+        for map_id, map_def in self.MappingsMap.items():
+            if map_def['button'].text() != no_midi_caption:
+                settings['mappings'][map_id] = map_def['button'].text()
             else:
-                settings['mappings'][mapId] = ""
+                settings['mappings'][map_id] = ""
         return settings
 
-    def loadSettings(self, settings):
-        for mapId, mapDef in self.MappingsMap.items():
-            if settings['mappings'][mapId]:
-                mapDef['button'].setText(settings['mappings'][mapId])
+    def loadSettings(self, settings): # pylint: disable=invalid-name
+        """Update the button captions (loaded from disk)."""
+        for map_id, map_def in self.MappingsMap.items():
+            if settings['mappings'][map_id]:
+                map_def['button'].setText(settings['mappings'][map_id])
 
     def __learn_midi(self):
         handler = get_plugin('Midi').input
