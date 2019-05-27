@@ -66,15 +66,14 @@ class ListLayoutController(Plugin):
             'plugins.list_layout_control', ListLayoutControllerSettings, self.Config)
 
         layout = self.app.layout
-        layout_view = layout.view()
         self.__keyword_to_action = {
-            'go': layout_view.goButton.click,
-            'stop': layout_view.controlButtons.stopButton.click,
-            'pause': layout_view.controlButtons.pauseButton.click,
-            'fadeIn': layout_view.controlButtons.fadeInButton.click,
-            'fadeOut': layout_view.controlButtons.fadeOutButton.click,
-            'resume': layout_view.controlButtons.resumeButton.click,
-            'interrupt': layout_view.controlButtons.interruptButton.click,
+            'go': layout.view.goButton.click,
+            'stop': layout.view.controlButtons.stopButton.click,
+            'pause': layout.view.controlButtons.pauseButton.click,
+            'fadeIn': layout.view.controlButtons.fadeInButton.click,
+            'fadeOut': layout.view.controlButtons.fadeOutButton.click,
+            'resume': layout.view.controlButtons.resumeButton.click,
+            'interrupt': layout.view.controlButtons.interruptButton.click,
             'prevCue': lambda: layout.set_standby_index(layout.standby_index() - 1),
             'nextCue': lambda: layout.set_standby_index(layout.standby_index() + 1),
         }
