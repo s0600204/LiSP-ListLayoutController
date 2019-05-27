@@ -105,6 +105,12 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
         handler = get_plugin('Midi').input
         handler.alternate_mode = True
 
+        midi_learn = QMessageBox(self)
+        midi_learn.setText(translate('ControllerMidiSettings',
+                                     'Listening MIDI messages ...'))
+        midi_learn.setIcon(QMessageBox.Information)
+        midi_learn.setStandardButtons(QMessageBox.Cancel)
+
         def received_message(msg):
             msg_dict = midi_utils.str_msg_to_dict(str(msg))
             if 'velocity' in msg_dict:
@@ -112,17 +118,11 @@ class ListLayoutControllerSettings(QGroupBox, SettingsPage):
 
             simplified_msg = midi_utils.dict_msg_to_str(msg_dict)
             self.sender().setText(simplified_msg)
-            self.midi_learn.accept()
+            midi_learn.accept()
 
         handler.new_message_alt.connect(received_message)
 
-        self.midi_learn = QMessageBox(self)
-        self.midi_learn.setText(translate('ControllerMidiSettings',
-                                          'Listening MIDI messages ...'))
-        self.midi_learn.setIcon(QMessageBox.Information)
-        self.midi_learn.setStandardButtons(QMessageBox.Cancel)
-
-        result = self.midi_learn.exec_()
+        result = midi_learn.exec_()
         if result == QMessageBox.Cancel:
             self.sender().setText(translate('ListLayoutController', 'No MIDI mapping'))
 
