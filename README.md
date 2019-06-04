@@ -15,8 +15,8 @@ plugin currently in (stalled) development by *offtools*
 
 ### Installation
 
-To use, place the contents in a subfolder of `$XDG_DATA_HOME/linux_show_player/plugins`
-(On most Linux systems, this will default to `~/.share/linux_show_player/plugins`.)
+To use, place the contents in a subfolder of `$XDG_DATA_HOME/LinuxShowPlayer/$LiSP_Version/plugins/`
+(On most Linux systems, this will default to `~/.local/share/LinuxShowPlayer/0.6/plugins/`.)
 
 When you next start **Linux Show Player**, the program should load the plugin
 automatically.
