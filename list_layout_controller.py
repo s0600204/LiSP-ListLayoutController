@@ -89,7 +89,7 @@ class ListLayoutController(Plugin):
         msg_dict = message.dict()
         if 'velocity' in msg_dict:
             msg_dict.pop('velocity')
-        simplified_msg = midi_utils.dict_msg_to_str(msg_dict)
+        simplified_msg = midi_utils.midi_dict_to_str(msg_dict)
 
         for keyword, mapping in self.Config['mappings'].items():
             if mapping == simplified_msg:
