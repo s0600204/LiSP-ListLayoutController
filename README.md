@@ -8,9 +8,10 @@ This plugin adds the ability to control various functions in the List Layout
 Originally authored by *Yinameah*, it has been updated to work with
 **Linux Show Player** v0.6 by *s0600204*.
 
-**Note:** This plugin may at some point be superseded by the **controller**
-plugin currently in (stalled) development by *offtools*
-[here](https://github.com/offtools/linux-show-player/tree/controller-new/lisp/plugins/controller).
+**Note:** This plugin was created before control via MIDI voice message (beyond
+Note-On/Off) was implemented in the **Controller** plugin that comes as part
+of the base install of **LiSP**. As such, this plugin is now redundant and thus
+this repository has been archived.
 
 
 ### Installation
